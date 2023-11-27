@@ -53,6 +53,7 @@ const VideoPlayer = () => {
         if (player.current.currentTime >= steps[startStep + 1]) {
             clearInterval(pauseTimer)
             player.current.pause()
+            player.current.currentTime = steps[startStep + 1]
             setStartStep(startStep + 1)
         }
     }
@@ -81,7 +82,6 @@ const VideoPlayer = () => {
                 height="72%"
             >
             </video>
-            <h3>Start Time: {steps[startStep]}</h3>
             <button
                 className="continue-button"
                 onClick={() => continuePlay()}
