@@ -68,8 +68,8 @@ const VideoPlayer = () => {
             <video
                 ref={player}
                 src={videoSrc}
-                width="90%"
-                height="60%"
+                width="96%"
+                height="72%"
                 onTimeUpdate={() => {
                     handlePause()
                 }}
