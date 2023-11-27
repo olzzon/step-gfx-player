@@ -4,12 +4,12 @@ import "./player.css";
 
 const VideoPlayer = () => {
     const [videoSrc, setVideoSrc] = useState<string>("");
-    const [steps, setSteps] = useState<number[]>([0, 8, 16]);
+    const [steps, setSteps] = useState<number[]>([]);
     const [startStep, setStartStep] = useState<number>(0);
     const player = React.useRef<HTMLVideoElement>(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
         if (!file) {
             return;
         }
