@@ -53,6 +53,7 @@ const VideoPlayer = () => {
 
     const continuePlay = () => {
         if (player.current) {
+            player.current.currentTime = steps[startStep]
             player.current.play()
         }
     }
