@@ -1,7 +1,7 @@
 {
   "name": "step-gfx-player",
   "productName": "step-gfx-player",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A player for playing STEP graphics",
   "main": ".webpack/main",
   "scripts": {
