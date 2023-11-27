@@ -17,7 +17,6 @@ const VideoPlayer = () => {
         const videoUrl = URL.createObjectURL(file);
 
         const sideCarFile = file.path.replace(/\.[^/.]+$/, ".XML");
-        console.log("Loading Sidecar: ", sideCarFile);
         fetch(sideCarFile, { mode: 'no-cors' })
             .then((sidecarXml: Response) => {
                 sidecarXml.text().then((sideCarXml: string) => {
@@ -25,7 +24,7 @@ const VideoPlayer = () => {
                     if (!parsedXml?.markers) {
                         return;
                     }
-                    setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseInt(marker.time) || 0));
+                    setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
                     console.log("Parsed Steps: ", steps);
                 }
                 )
