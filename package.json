@@ -15,6 +15,12 @@
     "name": "Kasper Olsson Hans (TV2 Denmark)",
     "email": "github@olzzon.dk"
   },
+  "contributors": [
+    {
+      "name": "Superfly",
+      "url": "https://superfly.tv"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.1.0",
