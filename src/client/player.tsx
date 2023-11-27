@@ -7,6 +7,7 @@ const VideoPlayer = () => {
     const [steps, setSteps] = useState<number[]>([]);
     const [startStep, setStartStep] = useState<number>(0);
     const player = React.useRef<HTMLVideoElement>(null);
+    let pauseTimer: NodeJS.Timeout
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -22,8 +23,11 @@ const VideoPlayer = () => {
                 sidecarXml.text().then((sideCarXml: string) => {
                     const parsedXml: Sidecar = mangleSidecarXml(sideCarXml);
                     if (!parsedXml?.markers) {
+                        setStartStep(0);
+                        setSteps([]);
                         return;
                     }
+                    setStartStep(0);
                     setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
                     console.log("Parsed Steps: ", steps);
                 }
@@ -39,22 +43,26 @@ const VideoPlayer = () => {
     const handleTimeUpdate = (stepIndex: number) => {
         setStartStep(stepIndex);
         if (player?.current) {
+            clearInterval(pauseTimer)
             player.current.pause()
             player.current.currentTime = steps[stepIndex]
         }
     }
 
-    const handlePause = () => {
+    const handlePauseAtNextStep = () => {
         if (player.current.currentTime >= steps[startStep + 1]) {
+            clearInterval(pauseTimer)
             player.current.pause()
             setStartStep(startStep + 1)
         }
     }
-
+    
     const continuePlay = () => {
         if (player.current) {
             player.current.currentTime = steps[startStep]
             player.current.play()
+            clearInterval(pauseTimer)
+            pauseTimer = setInterval(() => handlePauseAtNextStep(), 5)
         }
     }
 
@@ -71,9 +79,6 @@ const VideoPlayer = () => {
                 src={videoSrc}
                 width="96%"
                 height="72%"
-                onTimeUpdate={() => {
-                    handlePause()
-                }}
             >
             </video>
             <h3>Start Time: {steps[startStep]}</h3>
