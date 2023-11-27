@@ -14,6 +14,9 @@ const VideoPlayer = () => {
         if (!file) {
             return;
         }
+        setStartStep(0);
+        setSteps([]);
+
         console.log("Loading Video: ", file);
         const videoUrl = URL.createObjectURL(file);
 
@@ -23,11 +26,8 @@ const VideoPlayer = () => {
                 sidecarXml.text().then((sideCarXml: string) => {
                     const parsedXml: Sidecar = mangleSidecarXml(sideCarXml);
                     if (!parsedXml?.markers) {
-                        setStartStep(0);
-                        setSteps([]);
                         return;
                     }
-                    setStartStep(0);
                     setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
                     console.log("Parsed Steps: ", steps);
                 }
