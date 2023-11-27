@@ -5,10 +5,9 @@
   "description": "A player for playing STEP graphics",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "start": "ELECTRON_ENV=development electron-forge start",
+    "package": "ELECTRON_ENV=production electron-forge package",
+    "make": "ELECTRON_ENV=production electron-forge make",
     "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
