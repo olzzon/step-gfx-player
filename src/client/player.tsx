@@ -79,7 +79,7 @@ const VideoPlayer = () => {
                 ref={player}
                 src={videoSrc}
                 width="96%"
-                height="72%"
+                height="82%"
             >
             </video>
             <button

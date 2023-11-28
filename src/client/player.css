@@ -1,7 +1,8 @@
 .main {
   justify-content: center;
   height: 95vh;
-  width: 95vw;
+  width: 96vw;
+  margin-left: 1vw;
 }
 
 .select-file {
