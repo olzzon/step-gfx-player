@@ -73,7 +73,7 @@ const VideoPlayer = () => {
                 className="select-file"
                 type="file"
                 onChange={handleFileChange}
-                accept=".mov, .mp4, .webm"
+                accept=".mp4, .webm"
             />
             <video
                 ref={player}
