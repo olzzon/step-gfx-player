@@ -60,7 +60,12 @@ const VideoPlayer = () => {
     
     const continuePlay = () => {
         if (player.current) {
-            player.current.currentTime = steps[startStep]
+            if (player.current.currentTime > steps[startStep]) {
+                player.current.currentTime = steps[startStep + 1]
+                setStartStep(startStep + 1)
+            } else {
+                player.current.currentTime = steps[startStep]
+            }
             player.current.play()
             clearInterval(pauseTimer)
             pauseTimer = setInterval(() => handlePauseAtNextStep(), 5)
@@ -80,6 +85,7 @@ const VideoPlayer = () => {
                 src={videoSrc}
                 width="96%"
                 height="82%"
+                controls
             >
             </video>
             <button
