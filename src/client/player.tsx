@@ -76,7 +76,7 @@ const VideoPlayer = () => {
     }
 
     const handleCopyToClipboard = () => {
-        let text = fileName || "no file loaded"
+        let text = fileName ? fileName.split('.').slice(0, -1).join('.') : "no file loaded";
         navigator.clipboard.writeText(text)
     }
 
