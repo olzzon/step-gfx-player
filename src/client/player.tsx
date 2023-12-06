@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Sidecar, SidecarMarker, mangleSidecarXml } from "./sidecarLoader";
 import "./player.css";
+import { set } from "zod";
 
 const VideoPlayer = () => {
     const [videoSrc, setVideoSrc] = useState<string>("");
+    const [fileName, setFileName] = useState<string>("");
     const [steps, setSteps] = useState<number[]>([]);
     const [startStep, setStartStep] = useState<number>(0);
     const player = React.useRef<HTMLVideoElement>(null);
@@ -19,6 +21,7 @@ const VideoPlayer = () => {
 
         console.log("Loading Video: ", file);
         const videoUrl = URL.createObjectURL(file);
+        setFileName(file.name);
 
         const sideCarFile = file.path.replace(/\.[^/.]+$/, ".XML");
         fetch(sideCarFile, { mode: 'no-cors' })
@@ -57,7 +60,7 @@ const VideoPlayer = () => {
             setStartStep(startStep + 1)
         }
     }
-    
+
     const continuePlay = () => {
         if (player.current) {
             if (player.current.currentTime > steps[startStep]) {
@@ -72,19 +75,31 @@ const VideoPlayer = () => {
         }
     }
 
+    const handleCopyToClipboard = () => {
+        let text = fileName || "no file loaded"
+        navigator.clipboard.writeText(text)
+    }
+
     return (
         <div className="main">
-            <input
-                className="select-file"
-                type="file"
-                onChange={handleFileChange}
-                accept=".mp4, .webm"
-            />
+            <div className="file-handling">
+                <input
+                    className="select-file"
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".mp4, .webm"
+                />
+                <button
+                    className="copy-button"
+                    onClick={() => handleCopyToClipboard()}
+                >
+                    Filename to Clipboard
+                </button>
+            </div>
             <video
+                className="video-player"
                 ref={player}
                 src={videoSrc}
-                width="96%"
-                height="82%"
                 controls
             >
             </video>
