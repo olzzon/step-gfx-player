@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Sidecar, SidecarMarker, mangleSidecarXml } from "./sidecarLoader";
 import "./player.css";
-import { set } from "zod";
 
 const VideoPlayer = () => {
     const [videoSrc, setVideoSrc] = useState<string>("");
@@ -11,7 +10,7 @@ const VideoPlayer = () => {
     const player = React.useRef<HTMLVideoElement>(null);
     let pauseTimer: NodeJS.Timeout
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) {
             return;
@@ -24,22 +23,15 @@ const VideoPlayer = () => {
         setFileName(file.name);
 
         const sideCarFile = file.path.replace(/\.[^/.]+$/, ".XML");
-        fetch(sideCarFile, { mode: 'no-cors' })
-            .then((sidecarXml: Response) => {
-                sidecarXml.text().then((sideCarXml: string) => {
-                    const parsedXml: Sidecar = mangleSidecarXml(sideCarXml);
-                    if (!parsedXml?.markers) {
-                        return;
-                    }
-                    setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
-                    console.log("Parsed Steps: ", steps);
-                }
-                )
-            })
-            .then(data => {
-                console.log(data);
-            });
+        const fetched = await fetch(sideCarFile, { mode: 'no-cors' })
+        const sideCarXml = await fetched.text()
+        const parsedXml: Sidecar = mangleSidecarXml(sideCarXml);
 
+        if (!parsedXml?.markers) {
+            return;
+        }
+        setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
+        console.log("Parsed Steps: ", steps);
         setVideoSrc(videoUrl);
     };
 
@@ -80,6 +72,26 @@ const VideoPlayer = () => {
         navigator.clipboard.writeText(text)
     }
 
+    const StepButton = (props: { index: number }) => {
+        return (
+            <button
+                className="step-button"
+                style={
+                    startStep === props.index
+                        ? { backgroundColor: 'rgb(81, 81, 81)', 
+                            borderColor: 'rgb(230, 230, 230)', 
+                            color: 'white' 
+                        }
+                        : undefined
+                }
+                onClick={() => handleTimeUpdate(props.index)}
+                value={props.index}
+            >
+                {steps[props.index]}
+            </button>
+        )
+    }
+
     return (
         <div className="main">
             <div className="file-handling">
@@ -110,24 +122,9 @@ const VideoPlayer = () => {
                 Continue
             </button>
             <div className="steps">
-                {steps.map((step, index) => {
-                    return (
-                        <div key={index}>
-                            <button
-                                className="step-button"
-                                style={
-                                    startStep === index
-                                        ? { backgroundColor: 'rgb(81, 81, 81)', borderColor: 'rgb(230, 230, 230)', color: 'white' }
-                                        : undefined
-                                }
-                                onClick={() => handleTimeUpdate(index)}
-                                value={index}
-                            >
-                                {step}
-                            </button>
-                        </div>
-                    )
-                })}
+                {steps.map((step, index) =>
+                    <StepButton index={index} />
+                )}
             </div>
         </div>
     );
