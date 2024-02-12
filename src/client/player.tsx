@@ -8,9 +8,11 @@ const VideoPlayer = () => {
     const [steps, setSteps] = useState<number[]>([]);
     const [startStep, setStartStep] = useState<number>(0);
     const player = React.useRef<HTMLVideoElement>(null);
-    let pauseTimer: NodeJS.Timeout
+    let pauseTimer: NodeJS.Timeout;
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const file = event.target.files?.[0];
         if (!file) {
             return;
@@ -23,14 +25,18 @@ const VideoPlayer = () => {
         setFileName(file.name);
 
         const sideCarFile = file.path.replace(/\.[^/.]+$/, ".XML");
-        const fetched = await fetch(sideCarFile, { mode: 'no-cors' })
-        const sideCarXml = await fetched.text()
+        const fetched = await fetch(sideCarFile, { mode: "no-cors" });
+        const sideCarXml = await fetched.text();
         const parsedXml: Sidecar = mangleSidecarXml(sideCarXml);
 
         if (!parsedXml?.markers) {
             return;
         }
-        setSteps(parsedXml.markers.map((marker: SidecarMarker) => parseFloat(marker.time) || 0));
+        setSteps(
+            parsedXml.markers.map(
+                (marker: SidecarMarker) => parseFloat(marker.time) || 0
+            )
+        );
         console.log("Parsed Steps: ", steps);
         setVideoSrc(videoUrl);
     };
@@ -38,50 +44,54 @@ const VideoPlayer = () => {
     const handleTimeUpdate = (stepIndex: number) => {
         setStartStep(stepIndex);
         if (player?.current) {
-            clearInterval(pauseTimer)
-            player.current.pause()
-            player.current.currentTime = steps[stepIndex]
+            clearInterval(pauseTimer);
+            player.current.pause();
+            player.current.currentTime = steps[stepIndex];
         }
-    }
+    };
 
     const handlePauseAtNextStep = () => {
         if (player.current.currentTime >= steps[startStep + 1]) {
-            clearInterval(pauseTimer)
-            player.current.pause()
-            player.current.currentTime = steps[startStep + 1]
-            setStartStep(startStep + 1)
+            clearInterval(pauseTimer);
+            player.current.pause();
+            player.current.currentTime = steps[startStep + 1];
+            setStartStep(startStep + 1);
         }
-    }
+    };
 
     const continuePlay = () => {
         if (player.current) {
             if (player.current.currentTime > steps[startStep]) {
-                player.current.currentTime = steps[startStep + 1]
-                setStartStep(startStep + 1)
+                player.current.currentTime = steps[startStep + 1];
+                setStartStep(startStep + 1);
             } else {
-                player.current.currentTime = steps[startStep]
+                player.current.currentTime = steps[startStep];
             }
-            player.current.play()
-            clearInterval(pauseTimer)
-            pauseTimer = setInterval(() => handlePauseAtNextStep(), 5)
+            player.current.play();
+            clearInterval(pauseTimer);
+            pauseTimer = setInterval(() => handlePauseAtNextStep(), 5);
         }
-    }
+    };
 
     const handleCopyToClipboard = () => {
-        let text = fileName ? fileName.split('.').slice(0, -1).join('.') : "no file loaded";
-        navigator.clipboard.writeText(text)
-    }
+        const text = fileName
+            ? fileName.split(".").slice(0, -1).join(".")
+            : "no file loaded";
+        navigator.clipboard.writeText(text);
+    };
 
     const StepButton = (props: { index: number }) => {
         return (
             <button
+                accessKey={String(props.index)}
                 className="step-button"
                 style={
                     startStep === props.index
-                        ? { backgroundColor: 'rgb(81, 81, 81)', 
-                            borderColor: 'rgb(230, 230, 230)', 
-                            color: 'white' 
-                        }
+                        ? {
+                              backgroundColor: "rgb(81, 81, 81)",
+                              borderColor: "rgb(230, 230, 230)",
+                              color: "white",
+                          }
                         : undefined
                 }
                 onClick={() => handleTimeUpdate(props.index)}
@@ -89,19 +99,24 @@ const VideoPlayer = () => {
             >
                 {steps[props.index]}
             </button>
-        )
-    }
+        );
+    };
 
     return (
         <div className="main">
             <div className="file-handling">
-                <input
-                    className="select-file"
-                    type="file"
-                    onChange={handleFileChange}
-                    accept=".mp4, .webm"
-                />
+                <label className="select-file-label">
+                    {fileName ? fileName :  "Select videofile"}
+                    <input
+                        accessKey="f"
+                        className="select-file"
+                        type="file"
+                        onChange={handleFileChange}
+                        accept=".mp4, .webm"
+                    />
+                </label>
                 <button
+                    accessKey="c"
                     className="copy-button"
                     onClick={() => handleCopyToClipboard()}
                 >
@@ -113,20 +128,18 @@ const VideoPlayer = () => {
                 ref={player}
                 src={videoSrc}
                 controls
-            >
-            </video>
+            ></video>
             <button
-                className="continue-button"
-                onClick={() => continuePlay()}
-            >
+                accessKey=" " 
+                className="continue-button" onClick={() => continuePlay()}>
                 Continue
             </button>
             <div className="steps">
-                {steps.map((step, index) =>
+                {steps.map((step, index) => (
                     <StepButton index={index} />
-                )}
+                ))}
             </div>
         </div>
     );
-}
+};
 export default VideoPlayer;
