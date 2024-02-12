@@ -83,8 +83,9 @@ const VideoPlayer = () => {
     const StepButton = (props: { index: number }) => {
         return (
             <button
-                accessKey={String(props.index)}
+                accessKey={String(props.index + 1)}
                 className="step-button"
+                title="Select file - Windows: alt-shift-xx, Mac: ctrl-alt-xx"
                 style={
                     startStep === props.index
                         ? {
@@ -105,8 +106,11 @@ const VideoPlayer = () => {
     return (
         <div className="main">
             <div className="file-handling">
-                <label className="select-file-label">
-                    {fileName ? fileName :  "Select videofile"}
+                <label
+                    className="select-file-label"
+                    title="Select file - Windows: alt-shift-f, Mac: ctrl-alt-f"
+                >
+                    {fileName ? fileName : "Select videofile"}
                     <input
                         accessKey="f"
                         className="select-file"
@@ -117,6 +121,7 @@ const VideoPlayer = () => {
                 </label>
                 <button
                     accessKey="c"
+                    title="Copy selected filename to Clipboard - Windows: alt-shift-c, Mac: ctrl-alt-c"
                     className="copy-button"
                     onClick={() => handleCopyToClipboard()}
                 >
@@ -130,8 +135,11 @@ const VideoPlayer = () => {
                 controls
             ></video>
             <button
-                accessKey=" " 
-                className="continue-button" onClick={() => continuePlay()}>
+                accessKey=" "
+                className="continue-button"
+                title="Continue playing - Windows: alt-shift-space, Mac: ctrl-alt-space"
+                onClick={() => continuePlay()}
+            >
                 Continue
             </button>
             <div className="steps">
@@ -143,3 +151,4 @@ const VideoPlayer = () => {
     );
 };
 export default VideoPlayer;
+
